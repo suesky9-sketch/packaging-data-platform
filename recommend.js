@@ -1024,6 +1024,42 @@ function init() {
     state.preview.zoom = 1;
     renderPreview();
   });
+
+  // --- URL parameter auto-fill (from AI concept generator) ---
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlType = params.get("type");
+    const urlMin = parseInt(params.get("min") || "", 10);
+    const urlMax = parseInt(params.get("max") || "", 10);
+    const urlMarket = params.get("market");
+    const urlSource = params.get("source");
+    const urlShape = params.get("shape");
+
+    if (urlType === "杯类" || urlType === "瓶类") {
+      state.recommend.type = urlType;
+    }
+    if (Number.isFinite(urlMin) && urlMin > 0) state.recommend.min = urlMin;
+    if (Number.isFinite(urlMax) && urlMax > 0) state.recommend.max = Math.max(urlMax, state.recommend.min + 10);
+    if (urlMarket) {
+      const markets = Array.from($("#recMarkets").options).map(o => o.value);
+      urlMarket.split(/[,，]/).map(s => s.trim()).forEach(m => {
+        if (markets.includes(m)) state.recommend.markets.add(m);
+      });
+    }
+    if (urlShape === "regular" || urlShape === "slim" || urlShape === "stout") {
+      state.recommend.shapeProfile = urlShape;
+    }
+    if (urlSource) {
+      const banner = document.getElementById("sourceBanner");
+      const bannerText = document.getElementById("sourceBannerText");
+      if (banner && bannerText) {
+        banner.style.display = "flex";
+        bannerText.textContent = decodeURIComponent(urlSource);
+      }
+      state.recommend.generated = true;
+    }
+  } catch (e) { console.warn("URL param parse failed:", e); }
+
   renderRecommendation();
 }
 
