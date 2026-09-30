@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新品参数推荐工具</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <link rel="stylesheet" href="./recommend-standalone.css" />
+  </head>
+  <body class="standalone-recommend">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Development</p>
+        <h1>新品参数推荐工具</h1>
+      </div>
+      <div class="source-panel">
+        <span id="sourceFile">数据表</span>
+      </div>
+    </header>
+
+    <main>
+      <section id="recommend" class="view active recommend-layout">
+        <aside class="recommend-input-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Input</p>
+            <h2>开发条件</h2>
+          </div>
+
+          <div class="filter-group required">
+            <h3>包装类型</h3>
+            <div id="recType" class="segmented"></div>
+          </div>
+
+          <div class="filter-group required">
+            <h3>目标容量范围</h3>
+            <div class="range-slider-pair">
+              <input id="recMinSlider" type="range" min="0" max="1000" step="1" />
+              <input id="recMaxSlider" type="range" min="0" max="1000" step="1" />
+            </div>
+            <div class="range-row">
+              <input id="recMinInput" class="range-input" type="number" min="0" max="1000" placeholder="最小容量" />
+              <input id="recMaxInput" class="range-input" type="number" min="0" max="1000" placeholder="最大容量" />
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>口径/瓶口直径</h3>
+            <div class="range-row">
+              <input id="recMouthMinInput" class="range-input" type="number" min="0" step="0.1" placeholder="最小 mm" />
+              <input id="recMouthMaxInput" class="range-input" type="number" min="0" step="0.1" placeholder="最大 mm" />
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>目标市场</h3>
+            <select id="recMarkets" class="recommend-select" multiple></select>
+          </div>
+
+          <div class="filter-group preference-filter">
+            <div class="recommend-multiselect" data-preference="packages">
+              <button class="recommend-multiselect-trigger" type="button" aria-expanded="false" aria-controls="recPackages">
+                <span>
+                  <b>包装形式偏好</b>
+                  <small>全部</small>
+                </span>
+                <i aria-hidden="true"></i>
+              </button>
+              <div id="recPackages" class="recommend-multiselect-menu chip-wrap"></div>
+            </div>
+          </div>
+
+          <div class="filter-group preference-filter">
+            <div class="recommend-multiselect" data-preference="crafts">
+              <button class="recommend-multiselect-trigger" type="button" aria-expanded="false" aria-controls="recCrafts">
+                <span>
+                  <b>标签工艺偏好</b>
+                  <small>全部</small>
+                </span>
+                <i aria-hidden="true"></i>
+              </button>
+              <div id="recCrafts" class="recommend-multiselect-menu chip-wrap"></div>
+            </div>
+          </div>
+
+          <div class="filter-group preference-filter">
+            <div class="recommend-multiselect" data-preference="surfaces">
+              <button class="recommend-multiselect-trigger" type="button" aria-expanded="false" aria-controls="recSurfaces">
+                <span>
+                  <b>表面处理工艺偏好</b>
+                  <small>全部</small>
+                </span>
+                <i aria-hidden="true"></i>
+              </button>
+              <div id="recSurfaces" class="recommend-multiselect-menu chip-wrap"></div>
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>自定义备注</h3>
+            <textarea id="recNote" class="recommend-note" placeholder="例如：希望有勺子配件、需要可堆叠、盖膜要求不沾奶"></textarea>
+          </div>
+
+          <div class="recommend-actions">
+            <button id="generateRecommendation" class="apply-filter-button" type="button">生成推荐</button>
+            <button id="resetRecommendation" class="reset-button" type="button">重置</button>
+          </div>
+          <p id="recEstimate" class="recommend-estimate">当前条件下共找到 0 条参照竞品</p>
+        </aside>
+
+        <section class="recommend-output-panel">
+          <div class="result-toolbar standalone-toolbar">
+            <div>
+              <p class="eyebrow">Recommendation</p>
+              <h2>新品开发参数输出</h2>
+            </div>
+            <select id="recSort" class="recommend-sort" aria-label="参照竞品排序">
+              <option value="capacity">按推荐值相似度</option>
+              <option value="market">优先目标市场</option>
+              <option value="date">按记录日期</option>
+            </select>
+          </div>
+          <div id="recommendOutput" class="recommend-output"></div>
+        </section>
+      </section>
+    </main>
+
+    <div id="referenceDetail" class="reference-detail-modal" hidden>
+      <div class="reference-detail-panel" role="dialog" aria-modal="true" aria-label="竞品详情">
+        <div class="reference-detail-toolbar">
+          <div>
+            <p class="eyebrow">Reference</p>
+            <h2 id="referenceDetailTitle">竞品详情</h2>
+          </div>
+          <button id="referenceDetailClose" class="ghost-button" type="button">关闭</button>
+        </div>
+        <div id="referenceDetailBody" class="reference-detail-body"></div>
+      </div>
+    </div>
+
+    <div id="imagePreview" class="image-preview" hidden>
+      <div class="image-preview__panel" role="dialog" aria-modal="true" aria-label="图片查看">
+        <div class="image-preview__toolbar">
+          <span id="previewCounter">1 / 1</span>
+          <div class="image-preview__actions">
+            <button id="previewZoomOut" type="button" title="缩小">-</button>
+            <span id="previewZoomValue">100%</span>
+            <button id="previewZoomIn" type="button" title="放大">+</button>
+            <button id="previewZoomReset" type="button">重置</button>
+            <button id="previewClose" type="button">关闭</button>
+          </div>
+        </div>
+        <div class="image-preview__stage">
+          <button id="previewPrev" class="image-preview__nav" type="button">上一张</button>
+          <div class="image-preview__canvas">
+            <img id="previewImage" alt="放大查看图片">
+          </div>
+          <button id="previewNext" class="image-preview__nav" type="button">下一张</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./data.js"></script>
+    <script src="./assets/image-bundles/packaging-images-01.js"></script>
+    <script src="./assets/image-bundles/packaging-images-02.js"></script>
+    <script src="./assets/image-bundles/packaging-images-03.js"></script>
+    <script src="./assets/image-bundles/packaging-images-04.js"></script>
+    <script src="./assets/image-bundles/packaging-images-05.js"></script>
+    <script src="./assets/image-bundles/packaging-images-06.js"></script>
+    <script src="./recommend.js"></script>
+  </body>
+</html>

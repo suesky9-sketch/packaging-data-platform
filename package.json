@@ -1,0 +1,12 @@
+{
+  "name": "packaging-analysis-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "竞品包装分析数据平台静态 HTML 网站",
+  "scripts": {
+    "dev": "python -m http.server 5173",
+    "dev:node": "node server.js",
+    "build:data": "python build_data.py",
+    "start": "python -m http.server 5173"
+  }
+}

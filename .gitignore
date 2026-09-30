@@ -1,0 +1,27 @@
+# Dependencies and local deployment state
+node_modules/
+.netlify/
+
+# Local source workbooks
+*.xlsx
+*.xls
+~$*.xlsx
+~$*.xls
+
+# Browser test profiles and generated diagnostics
+.tmp-edge*/
+*.dmp
+*.log
+
+# Local caches
+__pycache__/
+*.pyc
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Local visual test output
+layout-check.png
+visual-check.png
+

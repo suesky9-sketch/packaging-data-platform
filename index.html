@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>竞品包装分析数据平台</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">Packaging Intelligence</p>
+        <h1>竞品包装分析数据平台</h1>
+      </div>
+      <div class="source-panel">
+        <span id="sourceFile">数据表</span>
+        <label class="upload-button" for="xlsxInput">替换数据表</label>
+        <input id="xlsxInput" type="file" accept=".xlsx,.xls" />
+      </div>
+    </header>
+
+    <nav class="section-tabs" aria-label="核心板块">
+      <button class="tab active" data-view="home">首页</button>
+    </nav>
+
+    <main>
+      <section id="home" class="view active two-column">
+        <aside class="filter-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Filter</p>
+            <h2>多维筛选区</h2>
+          </div>
+          <div class="filter-group required">
+            <h3>类别筛选</h3>
+            <div class="segmented" id="typeFilter"></div>
+          </div>
+          <div class="filter-group">
+            <h3>产品搜索</h3>
+            <input id="searchInput" class="search-input" type="search" placeholder="输入产品名称、品牌、市场..." />
+          </div>
+          <div id="dynamicFilters"></div>
+          <button id="applyFilters" class="apply-filter-button" type="button">筛选</button>
+          <button id="resetFilters" class="reset-button">一键重置</button>
+        </aside>
+
+        <section class="map-panel">
+          <div class="map-summary">
+            <div class="type-pills">
+              <button class="big-pill active" data-type="杯类">杯类</button>
+              <button class="big-pill" data-type="瓶类">瓶类</button>
+            </div>
+            <div class="metric-row">
+              <article><span id="marketCount">0</span><small>市场总数</small></article>
+              <article><span id="productCount">0</span><small>总个数</small></article>
+              <article><span id="brandCount">0</span><small>品牌总数</small></article>
+            </div>
+          </div>
+          <div class="map-card">
+            <div class="map-controls" aria-label="地图交互控制">
+              <button id="zoomInMap" type="button" title="放大地图">+</button>
+              <button id="zoomOutMap" type="button" title="缩小地图">-</button>
+              <button id="resetMapView" type="button" title="重置地图视图">重置</button>
+            </div>
+            <div class="map-roam-tip">滚轮缩放 · 拖拽平移 · 点击国家查看数据</div>
+            <div class="world-map" id="worldMap" aria-label="世界地图热力图"></div>
+          </div>
+        </section>
+      </section>
+
+      <section id="recommend" class="view recommend-layout">
+        <aside class="recommend-input-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Development</p>
+            <h2>包装结构智能推荐</h2>
+          </div>
+
+          <div class="filter-group required">
+            <h3>包装类型</h3>
+            <div id="recType" class="segmented"></div>
+          </div>
+
+          <div class="filter-group required">
+            <h3>目标容量范围</h3>
+            <div class="range-slider-pair">
+              <input id="recMinSlider" type="range" min="0" max="1000" step="1" />
+              <input id="recMaxSlider" type="range" min="0" max="1000" step="1" />
+            </div>
+            <div class="range-row">
+              <input id="recMinInput" class="range-input" type="number" min="0" max="1000" placeholder="最小容量" />
+              <input id="recMaxInput" class="range-input" type="number" min="0" max="1000" placeholder="最大容量" />
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>口径/瓶口直径</h3>
+            <div class="range-row">
+              <input id="recMouthMinInput" class="range-input" type="number" min="0" step="0.1" placeholder="最小 mm" />
+              <input id="recMouthMaxInput" class="range-input" type="number" min="0" step="0.1" placeholder="最大 mm" />
+            </div>
+          </div>
+
+          <div class="filter-group">
+            <h3>目标市场</h3>
+            <select id="recMarkets" class="recommend-select" multiple></select>
+          </div>
+
+          <div class="filter-group">
+            <h3>包装形式偏好</h3>
+            <div id="recPackages" class="chip-wrap"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>标签工艺偏好</h3>
+            <div id="recCrafts" class="chip-wrap"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>表面处理工艺偏好</h3>
+            <div id="recSurfaces" class="chip-wrap"></div>
+          </div>
+
+          <div class="filter-group">
+            <h3>自定义备注</h3>
+            <textarea id="recNote" class="recommend-note" placeholder="例如：希望有勺子配件、需要可堆叠、盖膜要求不沾奶"></textarea>
+          </div>
+
+          <div class="recommend-actions">
+            <button id="generateRecommendation" class="apply-filter-button" type="button">生成推荐</button>
+            <button id="resetRecommendation" class="reset-button" type="button">重置</button>
+          </div>
+          <p id="recEstimate" class="recommend-estimate">当前条件下共找到 0 条参照竞品</p>
+        </aside>
+
+        <section class="recommend-output-panel">
+          <div class="result-toolbar">
+            <div>
+              <p class="eyebrow">Recommendation</p>
+              <h2>新品开发参数输出</h2>
+            </div>
+          </div>
+          <div id="recommendOutput" class="recommend-output"></div>
+        </section>
+      </section>
+
+      <section id="results" class="view two-column">
+        <aside class="selected-panel">
+          <div class="panel-heading">
+            <p class="eyebrow">Selected</p>
+            <h2>已选筛选条件</h2>
+          </div>
+          <div id="selectedFilters" class="selected-list"></div>
+        </aside>
+        <section class="results-panel">
+          <div class="result-toolbar">
+            <div>
+              <p class="eyebrow">Results</p>
+              <h2><span id="resultCount">0</span> 个搜索结果</h2>
+            </div>
+            <div class="toolbar-actions result-module-tabs" aria-label="筛选结果模块">
+              <button class="tab active" data-view="results">筛选结果</button>
+              <button class="tab" data-view="detail">产品详情</button>
+              <button id="showVisual" class="tab" data-view="visual">结果可视化</button>
+              <button id="showTable" class="tab" data-view="table">结果表格化</button>
+            </div>
+          </div>
+          <div id="productCards" class="product-grid"></div>
+        </section>
+      </section>
+
+      <section id="detail" class="view">
+        <div class="detail-nav">
+          <button id="backResults" class="action-button">返回搜索结果页</button>
+          <div>
+            <button id="prevProduct" class="icon-button">上一个</button>
+            <button id="nextProduct" class="icon-button">下一个</button>
+          </div>
+        </div>
+        <div id="detailContent" class="detail-content"></div>
+      </section>
+
+      <section id="visual" class="view">
+        <div class="result-toolbar">
+          <div>
+            <p class="eyebrow">Visualization</p>
+            <h2>搜索结果可视化</h2>
+          </div>
+          <button class="action-button" data-jump="results">返回结果</button>
+        </div>
+        <div id="charts" class="chart-grid"></div>
+      </section>
+
+      <section id="table" class="view">
+        <div class="result-toolbar">
+          <div>
+            <p class="eyebrow">Table</p>
+            <h2>搜索结果表格化：<span id="tableCount">0</span> 条</h2>
+          </div>
+          <button class="action-button" data-jump="results">返回结果</button>
+        </div>
+        <div class="table-filter-row">
+          <input id="tableSearch" class="search-input" type="search" placeholder="全表搜索..." />
+          <select id="tableFilterColumn" aria-label="筛选列"></select>
+          <select id="tableFilterOperator" aria-label="筛选方式">
+            <option value="contains">包含</option>
+            <option value="equals">等于</option>
+            <option value="not-empty">非空</option>
+            <option value="empty">为空</option>
+          </select>
+          <input id="tableFilterValue" class="search-input" type="search" placeholder="筛选值..." />
+          <select id="tableSortColumn" aria-label="排序列"></select>
+          <select id="tableSortDirection" aria-label="排序方向">
+            <option value="asc">升序</option>
+            <option value="desc">降序</option>
+          </select>
+          <button id="clearTableFilters" class="ghost-button" type="button">重置表格条件</button>
+        </div>
+        <div class="table-wrap">
+          <table id="resultTable"></table>
+        </div>
+      </section>
+    </main>
+
+    <div id="imagePreview" class="image-preview" hidden>
+      <div class="image-preview__panel" role="dialog" aria-modal="true" aria-label="图片查看">
+        <div class="image-preview__toolbar">
+          <span id="previewCounter">1 / 1</span>
+          <div class="image-preview__actions">
+            <button id="previewZoomOut" type="button" title="缩小">-</button>
+            <span id="previewZoomValue">100%</span>
+            <button id="previewZoomIn" type="button" title="放大">+</button>
+            <button id="previewZoomReset" type="button">重置</button>
+            <button id="previewClose" type="button">关闭</button>
+          </div>
+        </div>
+        <div class="image-preview__stage">
+          <button id="previewPrev" class="image-preview__nav" type="button">上一张</button>
+          <div class="image-preview__canvas">
+            <img id="previewImage" alt="放大查看图片">
+          </div>
+          <button id="previewNext" class="image-preview__nav" type="button">下一张</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="./data.js"></script>
+    <script src="./assets/image-bundles/packaging-images-01.js"></script>
+    <script src="./assets/image-bundles/packaging-images-02.js"></script>
+    <script src="./assets/image-bundles/packaging-images-03.js"></script>
+    <script src="./assets/image-bundles/packaging-images-04.js"></script>
+    <script src="./assets/image-bundles/packaging-images-05.js"></script>
+    <script src="./assets/image-bundles/packaging-images-06.js"></script>
+    <script src="./assets/vendor/echarts.min.js"></script>
+    <script>
+      window.echarts || document.write('<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"><\/script>');
+    </script>
+    <script src="./assets/vendor/world.js"></script>
+    <script>
+      window.echarts && window.echarts.getMap && window.echarts.getMap("world") || document.write('<script src="https://cdn.jsdelivr.net/npm/echarts@4.9.0/map/js/world.js"><\/script>');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      window.XLSX || document.write('<script src="https://unpkg.com/xlsx@0.18.5/dist/xlsx.full.min.js"><\/script>');
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <script>
+      window.JSZip || document.write('<script src="https://unpkg.com/jszip@3.10.1/dist/jszip.min.js"><\/script>');
+    </script>
+    <script src="./app.js"></script>
+  </body>
+</html>
